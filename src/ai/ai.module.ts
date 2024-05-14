@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { OpenaiService } from './services/openai.service';
 
+@Global()
 @Module({
   providers: [OpenaiService],
 })
