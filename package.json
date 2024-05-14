@@ -84,5 +84,11 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "lint-staged": {
+    "{src,test}/**/*.ts": [
+      "pnpm lint",
+      "pnpm format"
+    ]
   }
 }
