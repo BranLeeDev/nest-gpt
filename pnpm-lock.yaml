@@ -32,6 +32,9 @@ importers:
       openai:
         specifier: ^4.47.1
         version: 4.47.1
+      pino-http:
+        specifier: ^9.0.0
+        version: 9.0.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
