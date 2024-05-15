@@ -13,7 +13,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<FastifyReply>();
     const status = exception.getStatus();
 
-    response.status(status).type('application/json').send({
+    const exceptionResponse = exception.getResponse();
+
+    if (typeof exceptionResponse === 'object') {
+      return response
+        .status(status)
+        .type('application/json')
+        .send(exceptionResponse);
+    }
+
+    return response.status(status).type('application/json').send({
       message: exception.message,
       error: exception.name,
       statusCode: status,
