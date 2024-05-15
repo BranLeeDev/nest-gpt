@@ -52,6 +52,7 @@ export class TextController {
   }
 
   @Post('translate-stream')
+  @HttpCode(HttpStatus.OK)
   async translateStream(
     @Body() translateDto: TranslateDto,
     @Res() res: FastifyReply,
