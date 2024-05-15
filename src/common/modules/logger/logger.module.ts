@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { LoggerModule as NestLoggerModule } from 'nestjs-pino';
+import { CorrelationIdMiddleware } from './middlewares/correlation-id.middleware';
 import config from '@configs/config.config';
 
 @Module({
@@ -22,4 +23,8 @@ import config from '@configs/config.config';
     }),
   ],
 })
-export class LoggerModule {}
+export class LoggerModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}
