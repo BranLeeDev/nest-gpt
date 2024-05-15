@@ -1,6 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { LoggerModule as NestLoggerModule } from 'nestjs-pino';
+import type { FastifyRequest } from 'fastify';
+import { CORRELATION_ID_HEADER } from './constants/correlation-id.constant';
 import { CorrelationIdMiddleware } from './middlewares/correlation-id.middleware';
 import config from '@configs/config.config';
 
@@ -17,6 +19,16 @@ import config from '@configs/config.config';
               : {
                   target: 'pino-pretty',
                 },
+            autoLogging: false,
+            serializers: {
+              req: () => undefined,
+              res: () => undefined,
+            },
+            customProps: (req: FastifyRequest['raw']) => {
+              return {
+                correlationId: req.headers[CORRELATION_ID_HEADER],
+              };
+            },
           },
         };
       },
