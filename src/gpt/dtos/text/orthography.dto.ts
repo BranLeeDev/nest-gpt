@@ -7,5 +7,5 @@ export class OrthographyDto {
 
   @IsInt()
   @IsOptional()
-  readonly maxTokens?: number;
+  readonly maxTokens: number = 150;
 }
