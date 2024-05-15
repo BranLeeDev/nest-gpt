@@ -168,4 +168,36 @@ export class TextService {
       throw new HttpException(error.message, error.status);
     }
   }
+
+  async translateStream(translateDto: TranslateDto) {
+    const { prompt, lang } = translateDto;
+    try {
+      this.logger.log(
+        `Initiating translation stream for prompt: ${prompt} to language: ${lang}`,
+      );
+      const response = await this.openaiService.openAi.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `Traduce el siguiente texto al idioma ${lang}:${prompt}`,
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        stream: true,
+        model: 'gpt-3.5-turbo',
+        temperature: 0.2,
+      });
+      return response;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
 }

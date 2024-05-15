@@ -50,4 +50,18 @@ export class TextController {
     const res = await this.textService.translate(translateDto);
     return res;
   }
+
+  @Post('translate-stream')
+  async translateStream(
+    @Body() translateDto: TranslateDto,
+    @Res() res: FastifyReply,
+  ) {
+    const stream = await this.textService.translateStream(translateDto);
+    for await (const chunk of stream) {
+      const piece = chunk.choices[0].delta.content || '';
+      res.raw.write(piece);
+    }
+    res.raw.end();
+    this.logger.log('Translation stream established successfully');
+  }
 }
