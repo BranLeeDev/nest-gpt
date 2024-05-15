@@ -6,6 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import { fastifyMultipart } from '@fastify/multipart';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@filters/http-exception.filter';
 
@@ -18,6 +19,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const PORT = Number(configService.get('PORT'));
   app.useLogger(app.get(Logger));
+  await app.register(fastifyMultipart);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
