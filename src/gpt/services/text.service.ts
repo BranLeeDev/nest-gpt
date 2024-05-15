@@ -98,4 +98,41 @@ export class TextService {
       throw new HttpException(error.message, error.status);
     }
   }
+
+  async prosConsArgumentativeStream(argumentativeDto: ArgumentativeDto) {
+    const { prompt } = argumentativeDto;
+    try {
+      this.logger.log(
+        `Initiating pros-cons argumentative (stream) for prompt: ${prompt}`,
+      );
+      const response = await this.openaiService.openAi.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `
+            Se te dará una pregunta y tu tarea es dar una respuesta con pros y contras,
+            la respuesta debe de ser en formato markdown,
+            los pros y contras deben de estar en una lista,
+            `,
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        model: 'gpt-3.5-turbo',
+        stream: true,
+        temperature: 0.8,
+        max_tokens: 500,
+      });
+      return response;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
 }
