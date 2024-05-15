@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseUUIDPipe,
   Post,
   Res,
 } from '@nestjs/common';
@@ -21,6 +24,15 @@ export class AudioController {
     @Res() res: FastifyReply,
   ) {
     const buffer = await this.audioService.textToAudio(textToAudioDto);
+    res.type('audio/mp3').send(buffer);
+  }
+
+  @Get('text-to-audio/:fileId')
+  async textToAudioGetter(
+    @Param('fileId', ParseUUIDPipe) fileId: string,
+    @Res() res: FastifyReply,
+  ) {
+    const buffer = await this.audioService.textToAudioGetter(fileId);
     res.type('audio/mp3').send(buffer);
   }
 }

@@ -1,7 +1,13 @@
 import { join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { TextToAudioDto } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
 
@@ -43,5 +49,24 @@ export class AudioService {
       });
       throw new HttpException(error.message, error.status);
     }
+  }
+
+  async textToAudioGetter(fileId: string) {
+    const filePath = join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'generated',
+      'audios',
+      `${fileId}.mp3`,
+    );
+    const wasFound = existsSync(filePath);
+    if (!wasFound) {
+      throw new NotFoundException(`File ${fileId}.mp3 not found`);
+    }
+    const data = await readFile(filePath);
+    const buffer = Buffer.from(data);
+    return buffer;
   }
 }
