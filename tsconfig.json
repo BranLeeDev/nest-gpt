@@ -18,7 +18,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@configs/*": ["src/common/modules/config/envs/configs/*"]
+      "@configs/*": ["src/common/modules/config/envs/configs/*"],
+      "@filters/*": ["src/common/filters/*"]
     }
   }
 }
