@@ -55,8 +55,22 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,images,node,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,images,node,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,images,node,visualstudiocode,audio
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,images,node,visualstudiocode,audio
+
+### Audio ###
+*.aif
+*.iff
+*.m3u
+*.m4a
+*.mid
+*.mp3
+*.mpa
+*.ra
+*.wav
+*.wma
+*.ogg
+*.flac
 
 ### Images ###
 # JPEG
@@ -356,4 +370,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,images,node,visualstudiocode
+# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,images,node,visualstudiocode,audio
