@@ -8,7 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { FastifyReply } from 'fastify';
-import { ArgumentativeDto, OrthographyDto } from '../dtos';
+import { ArgumentativeDto, OrthographyDto, TranslateDto } from '../dtos';
 import { TextService } from '../services/text.service';
 
 @Controller('text')
@@ -43,5 +43,11 @@ export class TextController {
     }
     res.raw.end();
     this.logger.log('Pros-cons argumentative (stream) completed');
+  }
+
+  @Post('translate')
+  async translate(@Body() translateDto: TranslateDto) {
+    const res = await this.textService.translate(translateDto);
+    return res;
   }
 }

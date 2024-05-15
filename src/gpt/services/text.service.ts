@@ -1,5 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { ArgumentativeDto, OrthographyDto } from '../dtos';
+import { ArgumentativeDto, OrthographyDto, TranslateDto } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
 
 @Injectable()
@@ -126,6 +126,39 @@ export class TextService {
         max_tokens: 500,
       });
       return response;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async translate(translateDto: TranslateDto) {
+    const { prompt, lang } = translateDto;
+    try {
+      this.logger.log(`Translating prompt: ${prompt}`);
+      const response = await this.openaiService.openAi.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `Traduce el siguiente texto al idioma ${lang}:${prompt}`,
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        model: 'gpt-3.5-turbo',
+        temperature: 0.2,
+      });
+      const content = response.choices[0].message.content;
+      this.logger.log(`Translation successful: ${content}`);
+      return {
+        message: content,
+      };
     } catch (error) {
       this.logger.error({
         message: error.message,
