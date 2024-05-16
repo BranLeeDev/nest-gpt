@@ -19,7 +19,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@configs/*": ["src/common/modules/config/envs/configs/*"],
-      "@filters/*": ["src/common/filters/*"]
+      "@filters/*": ["src/common/filters/*"],
+      "@utils/*": ["src/common/utils/*"]
     }
   }
 }
