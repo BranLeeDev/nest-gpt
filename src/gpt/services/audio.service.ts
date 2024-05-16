@@ -1,15 +1,10 @@
-import { join, resolve } from 'node:path';
-import { randomUUID } from 'node:crypto';
-import { createReadStream, existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import {
-  HttpException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Buffer } from 'node:buffer';
+import { readFile } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { TextToAudioDto } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
+import { checkIfFileExists, saveFileToGenerated } from '@utils/files.util';
 
 @Injectable()
 export class AudioService {
@@ -20,16 +15,6 @@ export class AudioService {
   async textToAudio(textToAudio: TextToAudioDto) {
     const { prompt, voice } = textToAudio;
     this.logger.log(`Generating audio for text: ${prompt}`);
-    const folderPath = resolve(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'generated',
-      'audios',
-    );
-    const speechFile = join(folderPath, `${randomUUID()}.mp3`);
-    await mkdir(folderPath, { recursive: true });
     try {
       const mp3 = await this.openaiService.openAi.audio.speech.create({
         model: 'tts-1',
@@ -38,8 +23,8 @@ export class AudioService {
         response_format: 'mp3',
       });
       const buffer = Buffer.from(await mp3.arrayBuffer());
-      await writeFile(speechFile, buffer);
-      this.logger.log(`Audio saved to file: ${speechFile}`);
+      const { filePath } = await saveFileToGenerated(buffer, 'audios', 'mp3');
+      this.logger.log(`Audio saved to file: ${filePath}`);
       return buffer;
     } catch (error) {
       this.logger.error({
@@ -52,19 +37,7 @@ export class AudioService {
   }
 
   async textToAudioGetter(fileId: string) {
-    const filePath = join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'generated',
-      'audios',
-      `${fileId}.mp3`,
-    );
-    const wasFound = existsSync(filePath);
-    if (!wasFound) {
-      throw new NotFoundException(`File ${fileId}.mp3 not found`);
-    }
+    const { filePath } = checkIfFileExists('audios', fileId, 'mp3');
     const data = await readFile(filePath);
     const buffer = Buffer.from(data);
     return buffer;
