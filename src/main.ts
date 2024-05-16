@@ -18,8 +18,14 @@ async function bootstrap() {
   );
   const configService = app.get(ConfigService);
   const PORT = Number(configService.get('PORT'));
+  const MAX_FILE_SIZE = Number(configService.get('MAX_FILE_SIZE'));
   app.useLogger(app.get(Logger));
-  await app.register(fastifyMultipart);
+  await app.register(fastifyMultipart, {
+    attachFieldsToBody: true,
+    limits: {
+      fileSize: MAX_FILE_SIZE * 1024 * 1024,
+    },
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
