@@ -70,7 +70,8 @@ export class AudioController {
     if (file.filename.length === 0) {
       throw new BadRequestException('File should not empty');
     }
-    if (file.mimetype !== 'audio/mp4') {
+
+    if (!file.filename.endsWith('m4a')) {
       throw new BadRequestException(
         'Invalid file type. Only .m4a files are allowed',
       );
