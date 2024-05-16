@@ -70,13 +70,14 @@ export class AudioService {
     return buffer;
   }
 
-  async audioToText(speechFilePath: string) {
+  async audioToText(speechFilePath: string, prompt: string | undefined) {
     const response =
       await this.openaiService.openAi.audio.transcriptions.create({
         model: 'whisper-1',
         file: createReadStream(speechFilePath),
+        prompt,
         language: 'es',
-        response_format: 'vtt',
+        response_format: 'verbose_json',
       });
     return response;
   }
