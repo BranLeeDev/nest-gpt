@@ -1,6 +1,6 @@
 import { join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { existsSync } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import {
   HttpException,
@@ -68,5 +68,16 @@ export class AudioService {
     const data = await readFile(filePath);
     const buffer = Buffer.from(data);
     return buffer;
+  }
+
+  async audioToText(speechFilePath: string) {
+    const response =
+      await this.openaiService.openAi.audio.transcriptions.create({
+        model: 'whisper-1',
+        file: createReadStream(speechFilePath),
+        language: 'es',
+        response_format: 'vtt',
+      });
+    return response;
   }
 }
