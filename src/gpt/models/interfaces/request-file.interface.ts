@@ -1,9 +1,9 @@
-import type {
-  FastifyMultipartBaseOptions,
-  MultipartFile,
-} from '@fastify/multipart';
+import type { MultipartFile, MultipartValue } from '@fastify/multipart';
 import { FastifyRequest } from 'fastify';
 
 export interface RequestFile extends FastifyRequest {
-  file?: (options?: FastifyMultipartBaseOptions) => Promise<MultipartFile>;
+  body: {
+    file?: MultipartFile;
+    prompt?: MultipartValue<string>;
+  };
 }
