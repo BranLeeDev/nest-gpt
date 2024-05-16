@@ -1,5 +1,6 @@
 import {
   IsEnum,
+  IsInt,
   IsNumber,
   IsString,
   Max,
@@ -22,4 +23,10 @@ export class EnvironmentVariables {
   @MinLength(30)
   @MaxLength(100)
   OPENAI_SECRET_KEY: string;
+
+  @IsInt()
+  @IsNumber()
+  @Min(0)
+  @Max(25)
+  MAX_FILE_SIZE: number;
 }
