@@ -8,27 +8,20 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Inject,
   Param,
   ParseUUIDPipe,
   Post,
   Req,
   Res,
 } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
 import type { FastifyReply } from 'fastify';
 import { RequestFile } from '../models';
 import { TextToAudioDto } from '../dtos';
 import { AudioService } from '../services/audio.service';
-import openai from '@configs/openai.config';
 
 @Controller('audio')
 export class AudioController {
-  constructor(
-    @Inject(openai.KEY)
-    private readonly configService: ConfigType<typeof openai>,
-    private readonly audioService: AudioService,
-  ) {}
+  constructor(private readonly audioService: AudioService) {}
 
   @Post('text-to-audio')
   @HttpCode(HttpStatus.OK)
@@ -42,21 +35,54 @@ export class AudioController {
 
   @Post('audio-to-text')
   async audioToText(@Req() req: RequestFile) {
-    const { maxFileSize } = this.configService;
-    if (!req.file) {
-      throw new BadRequestException('File is required');
-    }
-    const data = await req.file({
-      limits: {
-        fileSize: maxFileSize * 1024 * 1024,
-      },
-    });
-    if (data.mimetype !== 'audio/mp4') {
+    const { file, prompt, ...otherFields } = req.body ?? {};
+    if (Object.keys(otherFields).length > 0) {
       throw new BadRequestException(
-        'Invalid file type. Only .m4a files are allowed.',
+        'Invalid request. Only "file" and "prompt" keys are allowed',
       );
     }
-    const buffer = await data.toBuffer();
+
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+    if (file.type !== 'file') {
+      throw new BadRequestException(
+        'Invalid file format. File field must be of type file',
+      );
+    }
+    if (file.filename.length === 0) {
+      throw new BadRequestException('File should not empty');
+    }
+    if (file.mimetype !== 'audio/mp4') {
+      throw new BadRequestException(
+        'Invalid file type. Only .m4a files are allowed',
+      );
+    }
+
+    if (prompt) {
+      if (prompt.type !== 'field') {
+        throw new BadRequestException(
+          'Invalid prompt type. Prompt field must be of type text',
+        );
+      }
+      if (!prompt.value.split('').some((char) => isNaN(Number(char)))) {
+        throw new BadRequestException(
+          'Invalid prompt value. Prompt must be a string without numbers',
+        );
+      }
+      if (prompt.value.length <= 3 || prompt.value.length >= 60) {
+        throw new BadRequestException(
+          'Invalid prompt length. Prompt must be between 3 and 60 characters long',
+        );
+      }
+      if (prompt.mimetype !== 'text/plain') {
+        throw new BadRequestException(
+          'Invalid prompt type. Only plain text files are allowed',
+        );
+      }
+    }
+
+    const buffer = await file.toBuffer();
     const folderPath = resolve(
       __dirname,
       '..',
@@ -67,7 +93,10 @@ export class AudioController {
     );
     const speechFilePath = join(folderPath, `${randomUUID()}.m4a`);
     await writeFile(speechFilePath, buffer);
-    const res = await this.audioService.audioToText(speechFilePath);
+    const res = await this.audioService.audioToText(
+      speechFilePath,
+      !prompt ? undefined : prompt.value,
+    );
     return res;
   }
 
