@@ -1,6 +1,3 @@
-import { writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { randomUUID } from 'node:crypto';
 import {
   BadRequestException,
   Body,
@@ -15,9 +12,11 @@ import {
   Res,
 } from '@nestjs/common';
 import type { FastifyReply } from 'fastify';
+import { MultipartFile, MultipartValue } from '@fastify/multipart';
 import { RequestFile } from '../models';
 import { TextToAudioDto } from '../dtos';
 import { AudioService } from '../services/audio.service';
+import { saveFileToGenerated } from '@utils/files.util';
 
 @Controller('audio')
 export class AudioController {
@@ -36,12 +35,30 @@ export class AudioController {
   @Post('audio-to-text')
   async audioToText(@Req() req: RequestFile) {
     const { file, prompt, ...otherFields } = req.body ?? {};
-    if (Object.keys(otherFields).length > 0) {
-      throw new BadRequestException(
-        'Invalid request. Only "file" and "prompt" keys are allowed',
-      );
-    }
 
+    this.validateOtherFields(otherFields);
+    this.validateFile(file);
+    this.validatePrompt(prompt);
+
+    const buffer = await (file as MultipartFile).toBuffer();
+    const { filePath } = await saveFileToGenerated(buffer, 'uploads', 'm4a');
+    const res = await this.audioService.audioToText(
+      filePath,
+      !prompt ? undefined : prompt.value,
+    );
+    return res;
+  }
+
+  @Get('text-to-audio/:fileId')
+  async textToAudioGetter(
+    @Param('fileId', ParseUUIDPipe) fileId: string,
+    @Res() res: FastifyReply,
+  ) {
+    const buffer = await this.audioService.textToAudioGetter(fileId);
+    res.type('audio/mp3').send(buffer);
+  }
+
+  private validateFile(file: MultipartFile | undefined) {
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -58,7 +75,9 @@ export class AudioController {
         'Invalid file type. Only .m4a files are allowed',
       );
     }
+  }
 
+  private validatePrompt(prompt: MultipartValue<string> | undefined) {
     if (prompt) {
       if (prompt.type !== 'field') {
         throw new BadRequestException(
@@ -81,31 +100,13 @@ export class AudioController {
         );
       }
     }
-
-    const buffer = await file.toBuffer();
-    const folderPath = resolve(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'generated',
-      'uploads',
-    );
-    const speechFilePath = join(folderPath, `${randomUUID()}.m4a`);
-    await writeFile(speechFilePath, buffer);
-    const res = await this.audioService.audioToText(
-      speechFilePath,
-      !prompt ? undefined : prompt.value,
-    );
-    return res;
   }
 
-  @Get('text-to-audio/:fileId')
-  async textToAudioGetter(
-    @Param('fileId', ParseUUIDPipe) fileId: string,
-    @Res() res: FastifyReply,
-  ) {
-    const buffer = await this.audioService.textToAudioGetter(fileId);
-    res.type('audio/mp3').send(buffer);
+  private validateOtherFields(otherFields: object) {
+    if (Object.keys(otherFields).length > 0) {
+      throw new BadRequestException(
+        'Invalid request. Only "file" and "prompt" keys are allowed',
+      );
+    }
   }
 }
