@@ -37,21 +37,45 @@ export class AudioService {
   }
 
   async textToAudioGetter(fileId: string) {
-    const { filePath } = checkIfFileExists('audios', fileId, 'mp3');
-    const data = await readFile(filePath);
-    const buffer = Buffer.from(data);
-    return buffer;
+    try {
+      this.logger.log(`Starting to get audio file with ID ${fileId}`);
+      const { filePath } = checkIfFileExists('audios', fileId, 'mp3');
+      const data = await readFile(filePath);
+      const buffer = Buffer.from(data);
+      this.logger.log(`Successfully retrieved audio file with ID ${fileId}.`);
+      return buffer;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async audioToText(speechFilePath: string, prompt: string | undefined) {
-    const response =
-      await this.openaiService.openAi.audio.transcriptions.create({
-        model: 'whisper-1',
-        file: createReadStream(speechFilePath),
-        prompt,
-        language: 'es',
-        response_format: 'verbose_json',
+    try {
+      this.logger.log(
+        `Starting transcription for audio file: ${speechFilePath}`,
+      );
+      const response =
+        await this.openaiService.openAi.audio.transcriptions.create({
+          model: 'whisper-1',
+          file: createReadStream(speechFilePath),
+          prompt,
+          language: 'es',
+          response_format: 'verbose_json',
+        });
+      this.logger.log(`Successfully transcribed audio file: ${speechFilePath}`);
+      return response;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.statusCode,
       });
-    return response;
+      throw new HttpException(error.message, error.status);
+    }
   }
 }
