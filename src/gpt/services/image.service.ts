@@ -1,7 +1,10 @@
+import { readFile } from 'node:fs/promises';
+import { Buffer } from 'node:buffer';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { ImageGenerationDto } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
 import { downloadImage } from '@utils/images.util';
+import { checkIfFileExists } from '@utils/files.util';
 
 @Injectable()
 export class ImageService {
@@ -31,6 +34,25 @@ export class ImageService {
         localPath: '',
         revisedPrompt: response.data[0].revised_prompt,
       };
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async imageGenerationGetter(fileId: string) {
+    this.logger.log(`Starting to retrieve image file with ID ${fileId}`);
+    try {
+      const { filePath } = checkIfFileExists('images', fileId, 'png');
+      this.logger.debug(`File path found: ${filePath}`);
+      const data = await readFile(filePath);
+      const buffer = Buffer.from(data);
+      this.logger.log(`Successfully retrieved image file with ID ${fileId}`);
+      return buffer;
     } catch (error) {
       this.logger.error({
         message: error.message,
