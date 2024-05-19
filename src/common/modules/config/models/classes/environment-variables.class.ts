@@ -29,4 +29,8 @@ export class EnvironmentVariables {
   @Min(0)
   @Max(25)
   MAX_FILE_SIZE: number;
+
+  @IsString()
+  @MinLength(10)
+  SERVER_URL: string;
 }
