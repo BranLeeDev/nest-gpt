@@ -14,6 +14,7 @@ import config from '@configs/config.config';
         const { isProd } = configService;
         return {
           pinoHttp: {
+            level: isProd ? 'info' : 'debug',
             transport: isProd
               ? undefined
               : {
