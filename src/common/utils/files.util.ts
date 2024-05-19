@@ -1,8 +1,9 @@
-import { resolve, join } from 'node:path';
+import { resolve, join, parse } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { NotFoundException } from '@nestjs/common';
+import { isUUID } from 'class-validator';
 
 export async function saveFileToGenerated(
   buffer: Buffer,
@@ -42,4 +43,15 @@ export function checkIfFileExists(
   return {
     filePath,
   };
+}
+
+export function getFilePath(url: string) {
+  const parsedUrl = parse(url);
+  const fileName = parsedUrl.name;
+  if (isUUID(fileName)) {
+    return {
+      dir: parsedUrl.dir,
+      name: parsedUrl.name,
+    };
+  }
 }
