@@ -22,6 +22,7 @@ export class ImageService {
   async imageGeneration(imageGenerationDto: ImageGenerationDto) {
     this.logger.log('Starting image generation process');
     const { prompt } = imageGenerationDto;
+    const { serverUrl } = this.configService;
     try {
       this.logger.debug(`Prompt received: ${prompt}`);
       const response = await this.openaiService.openAi.images.generate({
@@ -34,11 +35,11 @@ export class ImageService {
       });
       const imageUrl = response.data[0].url || '';
       this.logger.debug(`Image URL received: ${imageUrl}`);
-      await downloadImage(imageUrl, 'png');
+      const { fileId } = await downloadImage(imageUrl, 'png');
       this.logger.log('Image generation process completed successfully');
       return {
-        url: response.data[0].url,
-        localPath: '',
+        url: `${serverUrl}/image/image-generation/${fileId}`,
+        openAiUrl: imageUrl,
         revisedPrompt: response.data[0].revised_prompt,
       };
     } catch (error) {
