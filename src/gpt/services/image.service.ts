@@ -1,17 +1,23 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { Buffer } from 'node:buffer';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { ImageGenerationDto, ImageVariationDto } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
 import { downloadImage } from '@utils/images.util';
 import { checkIfFileExists } from '@utils/files.util';
+import config from '@configs/config.config';
 
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name);
 
-  constructor(private readonly openaiService: OpenaiService) {}
+  constructor(
+    private readonly openaiService: OpenaiService,
+    @Inject(config.KEY)
+    private readonly configService: ConfigType<typeof config>,
+  ) {}
 
   async imageGeneration(imageGenerationDto: ImageGenerationDto) {
     this.logger.log('Starting image generation process');
@@ -47,6 +53,7 @@ export class ImageService {
 
   async imageVariation(imageVariationDto: ImageVariationDto) {
     const { baseImageUrl } = imageVariationDto;
+    const { serverUrl } = this.configService;
     try {
       this.logger.log(
         `Starting image variation process for URL: ${baseImageUrl}`,
@@ -70,7 +77,7 @@ export class ImageService {
         `Generated image downloaded to: ${secondImageFilePath}`,
       );
       const result = {
-        url: `http://localhost:3000/image/image-generation/${fileId}`,
+        url: `${serverUrl}/image/image-generation/${fileId}`,
         openAiUrl: generatedImageUrl,
         revisedPrompt: response.data[0].revised_prompt,
       };
