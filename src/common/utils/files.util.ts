@@ -10,11 +10,13 @@ export async function saveFileToGenerated(
   fileFormat: string,
 ) {
   const folderPath = resolve(__dirname, '..', '..', '..', 'generated', folder);
-  const filePath = join(folderPath, `${randomUUID()}.${fileFormat}`);
+  const fileId = randomUUID();
+  const filePath = join(folderPath, `${fileId}.${fileFormat}`);
   await mkdir(folderPath, { recursive: true });
   await writeFile(filePath, buffer);
   return {
     filePath,
+    fileId,
   };
 }
 
