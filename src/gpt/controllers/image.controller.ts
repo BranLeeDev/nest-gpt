@@ -8,7 +8,11 @@ import {
   Res,
 } from '@nestjs/common';
 import type { FastifyReply } from 'fastify';
-import { ImageGenerationDto, ImageVariationDto } from '../dtos';
+import {
+  ImageGenerationDto,
+  ImageMaskingDto,
+  ImageVariationDto,
+} from '../dtos';
 import { ImageService } from '../services/image.service';
 
 @Controller('image')
@@ -24,6 +28,12 @@ export class ImageController {
   @Post('image-variation')
   async imageVariation(@Body() imageVariationDto: ImageVariationDto) {
     const res = await this.imageService.imageVariation(imageVariationDto);
+    return res;
+  }
+
+  @Post('image-masking')
+  async imageMasking(@Body() imageMaskingDto: ImageMaskingDto) {
+    const res = await this.imageService.imageMasking(imageMaskingDto);
     return res;
   }
 

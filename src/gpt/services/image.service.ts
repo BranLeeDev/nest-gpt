@@ -1,11 +1,21 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { Buffer } from 'node:buffer';
-import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { ImageGenerationDto, ImageVariationDto } from '../dtos';
+import {
+  ImageGenerationDto,
+  ImageMaskingDto,
+  ImageVariationDto,
+} from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
-import { downloadImage } from '@utils/images.util';
+import { downloadBase64Image, downloadImage } from '@utils/images.util';
 import { checkIfFileExists } from '@utils/files.util';
 import config from '@configs/config.config';
 
@@ -103,6 +113,43 @@ export class ImageService {
       const buffer = Buffer.from(data);
       this.logger.log(`Successfully retrieved image file with ID ${fileId}`);
       return buffer;
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async imageMasking(imageMaskingDto: ImageMaskingDto) {
+    const { prompt, originalImageUrl, maskImageBase64 } = imageMaskingDto;
+    const { serverUrl } = this.configService;
+    try {
+      this.logger.log(`Processing image masking with prompt: ${prompt}`);
+      const pngImage = await downloadImage(originalImageUrl, 'png');
+      const base64Image = await downloadBase64Image(maskImageBase64, 'png');
+      const response = await this.openaiService.openAi.images.edit({
+        model: 'dall-e-2',
+        prompt,
+        image: createReadStream(pngImage.imageFilePath),
+        mask: createReadStream(base64Image.filePath),
+        n: 1,
+        size: '1024x1024',
+        response_format: 'url',
+      });
+      const respUrl = response.data[0].url;
+      if (!respUrl) {
+        throw new NotFoundException('No URL found in response data');
+      }
+      const openaiImage = await downloadImage(respUrl, 'png');
+      this.logger.log(`Image masking completed successfully`);
+      return {
+        url: `${serverUrl}/image/image-generation/${openaiImage.fileId}`,
+        openAiUrl: respUrl,
+        revisedPrompt: response.data[0].revised_prompt,
+      };
     } catch (error) {
       this.logger.error({
         message: error.message,
