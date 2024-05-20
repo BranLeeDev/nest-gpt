@@ -10,6 +10,17 @@ export class AssistantsService {
     return thread;
   }
 
+  async checkRunCompleteStatus(threadId: string, runId: string) {
+    while (true) {
+      const runStatus = await this.retrieveRunStatus(threadId, runId);
+      console.log(runStatus.status);
+      if (runStatus.status === 'completed') {
+        return runStatus.status;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  }
+
   async retrieveRunStatus(threadId: string, runId: string) {
     const runStatus =
       await this.openaiService.openAi.beta.threads.runs.retrieve(
