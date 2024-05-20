@@ -11,9 +11,10 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@filters/http-exception.filter';
 
 async function bootstrap() {
+  const MAX_BODY_LIMIT = Number(process.env.MAX_BODY_LIMIT);
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({ bodyLimit: MAX_BODY_LIMIT * 1024 * 1024 }),
     { bufferLogs: true },
   );
   const configService = app.get(ConfigService);
