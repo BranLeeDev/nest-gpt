@@ -10,6 +10,15 @@ export class AssistantsService {
     return thread;
   }
 
+  async retrieveRunStatus(threadId: string, runId: string) {
+    const runStatus =
+      await this.openaiService.openAi.beta.threads.runs.retrieve(
+        threadId,
+        runId,
+      );
+    return runStatus;
+  }
+
   async createRun(threadId: string, assistantId: string) {
     const run = await this.openaiService.openAi.beta.threads.runs.create(
       threadId,
