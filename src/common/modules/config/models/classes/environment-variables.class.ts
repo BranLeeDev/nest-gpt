@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsInt,
   IsNumber,
+  IsPositive,
   IsString,
   Max,
   MaxLength,
@@ -33,4 +34,10 @@ export class EnvironmentVariables {
   @IsString()
   @MinLength(10)
   SERVER_URL: string;
+
+  @IsNumber()
+  @IsInt()
+  @IsPositive()
+  @Max(10)
+  MAX_BODY_LIMIT: number;
 }
