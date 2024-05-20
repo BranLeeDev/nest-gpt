@@ -10,6 +10,16 @@ export class AssistantsService {
     return thread;
   }
 
+  async getMessagesList(threadId: string) {
+    const messagesList =
+      await this.openaiService.openAi.beta.threads.messages.list(threadId);
+    const messages = messagesList.data.map((message) => ({
+      role: message.role,
+      content: message.content.map((content) => (content as any).text.value),
+    }));
+    return messages.reverse();
+  }
+
   async checkRunCompleteStatus(threadId: string, runId: string) {
     while (true) {
       const runStatus = await this.retrieveRunStatus(threadId, runId);
