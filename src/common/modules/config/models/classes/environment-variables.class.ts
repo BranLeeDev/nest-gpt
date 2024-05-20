@@ -27,7 +27,7 @@ export class EnvironmentVariables {
 
   @IsInt()
   @IsNumber()
-  @Min(0)
+  @IsPositive()
   @Max(25)
   MAX_FILE_SIZE: number;
 
