@@ -1,5 +1,8 @@
 import { Buffer } from 'node:buffer';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import {
   checkIfFileExists,
   getFilePath,
@@ -34,4 +37,17 @@ export async function downloadImage(url: string, imageType: string) {
     imageFilePath,
     fileId,
   };
+}
+
+export async function downloadBase64Image(
+  base64Image: string,
+  imageType: string,
+) {
+  const cleanBase64Image = base64Image.split(';base64,').pop();
+  if (!cleanBase64Image) {
+    throw new BadRequestException('Invalid base64Image format');
+  }
+  const imageBuffer = Buffer.from(cleanBase64Image, 'base64');
+  const res = await saveFileToGenerated(imageBuffer, 'images', imageType);
+  return res;
 }
