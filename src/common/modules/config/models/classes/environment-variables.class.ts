@@ -5,7 +5,6 @@ import {
   IsPositive,
   IsString,
   Max,
-  MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
@@ -22,7 +21,6 @@ export class EnvironmentVariables {
 
   @IsString()
   @MinLength(30)
-  @MaxLength(100)
   OPENAI_SECRET_KEY: string;
 
   @IsInt()
