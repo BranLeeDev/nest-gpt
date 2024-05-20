@@ -49,4 +49,13 @@ export class AssistantsService {
     );
     return run;
   }
+
+  async createMessage(threadId: string, question: string) {
+    const message =
+      await this.openaiService.openAi.beta.threads.messages.create(threadId, {
+        role: 'user',
+        content: question,
+      });
+    return message;
+  }
 }
