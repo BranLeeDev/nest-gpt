@@ -38,4 +38,8 @@ export class EnvironmentVariables {
   @IsPositive()
   @Max(10)
   MAX_BODY_LIMIT: number;
+
+  @IsString()
+  @MinLength(5)
+  SAM_ASSISTANT_ID: string;
 }
