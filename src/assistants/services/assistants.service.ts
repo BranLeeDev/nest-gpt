@@ -30,7 +30,7 @@ export class AssistantsService {
     }
   }
 
-  async retrieveRunStatus(threadId: string, runId: string) {
+  private async retrieveRunStatus(threadId: string, runId: string) {
     const runStatus =
       await this.openaiService.openAi.beta.threads.runs.retrieve(
         threadId,
