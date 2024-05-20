@@ -23,7 +23,6 @@ export class AssistantsService {
   async checkRunCompleteStatus(threadId: string, runId: string) {
     while (true) {
       const runStatus = await this.retrieveRunStatus(threadId, runId);
-      console.log(runStatus.status);
       if (runStatus.status === 'completed') {
         return runStatus.status;
       }
