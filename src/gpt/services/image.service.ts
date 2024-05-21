@@ -15,7 +15,11 @@ import {
   ImageVariationDto,
 } from '../dtos';
 import { OpenaiService } from '../../ai/services/openai.service';
-import { downloadBase64Image, downloadImage } from '@utils/images.util';
+import {
+  convertToBase64,
+  downloadBase64Image,
+  downloadImage,
+} from '@utils/images.util';
 import { checkIfFileExists } from '@utils/files.util';
 import config from '@configs/config.config';
 
@@ -149,6 +153,45 @@ export class ImageService {
         url: `${serverUrl}/image/image-generation/${openaiImage.fileId}`,
         openAiUrl: respUrl,
         revisedPrompt: response.data[0].revised_prompt,
+      };
+    } catch (error) {
+      this.logger.error({
+        message: error.message,
+        error: error.type,
+        statusCode: error.status,
+      });
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async extractTextFromImage(filePath: string, prompt: string | undefined) {
+    try {
+      this.logger.log('Starting extraction of text from image');
+      const base64Image = await convertToBase64(filePath);
+      const response = await this.openaiService.openAi.chat.completions.create({
+        model: 'gpt-4o',
+        max_tokens: 500,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: prompt ?? '¿Que logras ver en la imagen?',
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: base64Image,
+                },
+              },
+            ],
+          },
+        ],
+      });
+      this.logger.log('Text extraction successful');
+      return {
+        msg: response.choices[0].message.content,
       };
     } catch (error) {
       this.logger.error({
