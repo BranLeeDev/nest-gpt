@@ -42,4 +42,14 @@ export class EnvironmentVariables {
   @IsString()
   @MinLength(5)
   SAM_ASSISTANT_ID: string;
+
+  @IsNumber({ maxDecimalPlaces: 3 })
+  @IsPositive()
+  @Max(24)
+  THROTTLE_TTL: number;
+
+  @IsNumber()
+  @IsInt()
+  @IsPositive()
+  THROTTLE_LIMIT: number;
 }
