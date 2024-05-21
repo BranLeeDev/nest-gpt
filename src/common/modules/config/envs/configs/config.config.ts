@@ -6,5 +6,7 @@ export default registerAs('config', () => {
     isProd: process.env.NODE_ENV === 'production',
     port: process.env.PORT,
     serverUrl: process.env.SERVER_URL,
+    throttleTtl: Number(process.env.THROTTLE_TTL),
+    throttleLimit: Number(process.env.THROTTLE_LIMIT),
   };
 });
