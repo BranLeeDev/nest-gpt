@@ -21,7 +21,9 @@ async function bootstrap() {
   const PORT = Number(configService.get('PORT'));
   const MAX_FILE_SIZE = Number(configService.get('MAX_FILE_SIZE'));
   app.useLogger(app.get(Logger));
-  app.enableCors();
+  app.enableCors({
+    origin: [],
+  });
   await app.register(fastifyMultipart, {
     attachFieldsToBody: true,
     limits: {
