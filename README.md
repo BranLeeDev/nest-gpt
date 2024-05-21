@@ -5,3 +5,7 @@
 # Nest GPT - REST API
 
 Nest GPT is a REST API built with [NestJS](https://nestjs.com/), designed to interact with OpenAI's GPT models. This API handles image generation and variation requests, leveraging the robust architecture of NestJS and using Fastify for optimized performance. The project includes environment-based configuration management and follows best practices for security and scalability.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
