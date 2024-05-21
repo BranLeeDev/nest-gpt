@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer';
+import { readFile } from 'node:fs/promises';
 import {
   BadRequestException,
   InternalServerErrorException,
@@ -50,4 +51,10 @@ export async function downloadBase64Image(
   const imageBuffer = Buffer.from(cleanBase64Image, 'base64');
   const res = await saveFileToGenerated(imageBuffer, 'images', imageType);
   return res;
+}
+
+export async function convertToBase64(filePath: string) {
+  const data = await readFile(filePath);
+  const base64 = Buffer.from(data).toString('base64');
+  return `data:image/jpg;base64,${base64}`;
 }
