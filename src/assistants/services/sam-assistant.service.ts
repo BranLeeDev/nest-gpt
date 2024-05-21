@@ -20,7 +20,7 @@ export class SamAssistantService {
       threadId,
       samAssistantId!,
     );
-    await this.assistantsService.checkRunCompleteStatus(run.id, threadId);
+    await this.assistantsService.checkRunCompleteStatus(threadId, run.id);
     const messages = await this.assistantsService.getMessagesList(threadId);
     return messages;
   }
