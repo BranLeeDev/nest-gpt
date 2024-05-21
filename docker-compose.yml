@@ -1,0 +1,13 @@
+services:
+  nest-gpt:
+    container_name: nest-gpt
+    restart: always
+    build:
+      context: .
+      target: production
+      dockerfile: Dockerfile
+      args:
+        - PORT=${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    env_file: .env
