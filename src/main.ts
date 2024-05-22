@@ -26,7 +26,14 @@ async function bootstrap() {
   app.enableCors({
     origin: [],
   });
-  await app.register(fastifyHelmet);
+  await app.register(fastifyHelmet, {
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        'img-src': ['self', 'https:'],
+      },
+    },
+  });
   await app.register(fastifyMultipart, {
     attachFieldsToBody: true,
     limits: {
