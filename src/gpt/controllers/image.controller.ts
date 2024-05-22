@@ -9,7 +9,16 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { MultipartFile, MultipartValue } from '@fastify/multipart';
 import {
@@ -26,24 +35,85 @@ import { saveFileToGenerated } from '@utils/files.util';
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
+  @ApiCreatedResponse({
+    description: 'A new image generation is created successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post('image-generation')
   async imageGeneration(@Body() imageGenerationDto: ImageGenerationDto) {
     const res = await this.imageService.imageGeneration(imageGenerationDto);
     return res;
   }
 
+  @ApiCreatedResponse({
+    description: 'A new image variation has been created successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post('image-variation')
   async imageVariation(@Body() imageVariationDto: ImageVariationDto) {
     const res = await this.imageService.imageVariation(imageVariationDto);
     return res;
   }
 
+  @ApiCreatedResponse({
+    description: 'A new image masking operation has been successfully executed',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post('image-masking')
   async imageMasking(@Body() imageMaskingDto: ImageMaskingDto) {
     const res = await this.imageService.imageMasking(imageMaskingDto);
     return res;
   }
 
+  @ApiCreatedResponse({
+    description:
+      'A new text extraction operation has been successfully executed from an image',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        prompt: {
+          type: 'string',
+        },
+      },
+    },
+  })
   @Post('extract-text-from-image')
   async extractTextFromImage(@Req() req: RequestFile) {
     const { file, prompt, ...otherFields } = req.body ?? {};
@@ -61,6 +131,15 @@ export class ImageController {
     return res;
   }
 
+  @ApiOkResponse({ description: 'The generated image' })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Get('image-generation/:fileId')
   async imageGenerationGetter(
     @Param('fileId', ParseUUIDPipe) fileId: string,
