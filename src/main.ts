@@ -9,6 +9,7 @@ import { Logger } from 'nestjs-pino';
 import { fastifyHelmet } from '@fastify/helmet';
 import { fastifyMultipart } from '@fastify/multipart';
 import { AppModule } from './app.module';
+import { SwaggerModule } from './common/modules/swagger/swagger.module';
 import { HttpExceptionFilter } from '@filters/http-exception.filter';
 
 async function bootstrap() {
@@ -39,6 +40,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+  SwaggerModule.setupSwagger(app);
   await app.listen(PORT, '0.0.0.0');
 }
 bootstrap();
