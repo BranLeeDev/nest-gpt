@@ -11,6 +11,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { MultipartFile, MultipartValue } from '@fastify/multipart';
 import { RequestFile } from '../models';
@@ -18,6 +19,7 @@ import { TextToAudioDto } from '../dtos';
 import { AudioService } from '../services/audio.service';
 import { saveFileToGenerated } from '@utils/files.util';
 
+@ApiTags('audio')
 @Controller('audio')
 export class AudioController {
   constructor(private readonly audioService: AudioService) {}

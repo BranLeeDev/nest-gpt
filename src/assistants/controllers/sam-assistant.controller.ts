@@ -1,7 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateMessageDto } from '../dtos';
 import { SamAssistantService } from '../services/sam-assistant.service';
 
+@ApiTags('sam-assistant')
 @Controller('sam-assistant')
 export class SamAssistantController {
   constructor(private readonly samAssistant: SamAssistantService) {}

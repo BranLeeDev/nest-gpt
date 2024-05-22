@@ -7,10 +7,12 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { ArgumentativeDto, OrthographyDto, TranslateDto } from '../dtos';
 import { TextService } from '../services/text.service';
 
+@ApiTags('text')
 @Controller('text')
 export class TextController {
   private readonly logger = new Logger(TextController.name);

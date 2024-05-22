@@ -9,6 +9,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { MultipartFile, MultipartValue } from '@fastify/multipart';
 import {
@@ -20,6 +21,7 @@ import { RequestFile } from '../models';
 import { ImageService } from '../services/image.service';
 import { saveFileToGenerated } from '@utils/files.util';
 
+@ApiTags('image')
 @Controller('image')
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
