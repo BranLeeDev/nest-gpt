@@ -15,6 +15,6 @@ export class SwaggerModule {
       .setVersion('1.0')
       .build();
     const document = NestSwaggerModule.createDocument(app, config);
-    NestSwaggerModule.setup('docs', app, document);
+    NestSwaggerModule.setup('docs', app, document, { useGlobalPrefix: true });
   }
 }
