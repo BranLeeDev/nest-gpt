@@ -26,6 +26,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [],
   });
+  app.setGlobalPrefix('api/v1');
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: {
       useDefaults: true,
