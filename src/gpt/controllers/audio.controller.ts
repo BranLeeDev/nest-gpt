@@ -11,7 +11,17 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiProduces,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { MultipartFile, MultipartValue } from '@fastify/multipart';
 import { RequestFile } from '../models';
@@ -24,6 +34,19 @@ import { saveFileToGenerated } from '@utils/files.util';
 export class AudioController {
   constructor(private readonly audioService: AudioService) {}
 
+  @ApiOkResponse({
+    description:
+      'The text-to-audio conversion was successful. The audio file is returned as a binary response',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiProduces('audio/mp3')
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Post('text-to-audio')
   @HttpCode(HttpStatus.OK)
   async textToAudio(
@@ -34,6 +57,33 @@ export class AudioController {
     res.type('audio/mp3').send(buffer);
   }
 
+  @ApiCreatedResponse({
+    description: 'Audio file successfully converted to text',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        prompt: {
+          type: 'string',
+        },
+      },
+    },
+  })
   @Post('audio-to-text')
   async audioToText(@Req() req: RequestFile) {
     const { file, prompt, ...otherFields } = req.body ?? {};
@@ -51,6 +101,18 @@ export class AudioController {
     return res;
   }
 
+  @ApiOkResponse({
+    description: 'Find audio file',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too many request. PLease try again later',
+  })
+  @ApiProduces('audio/mp3')
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   @Get('text-to-audio/:fileId')
   async textToAudioGetter(
     @Param('fileId', ParseUUIDPipe) fileId: string,
