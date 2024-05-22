@@ -1,6 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString, MinLength } from 'class-validator';
 import { Lang } from '../../models';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class TranslateDto {
   @ApiProperty({
