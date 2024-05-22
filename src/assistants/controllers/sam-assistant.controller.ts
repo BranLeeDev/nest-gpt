@@ -16,7 +16,7 @@ export class SamAssistantController {
   constructor(private readonly samAssistant: SamAssistantService) {}
 
   @ApiOperation({
-    summary: 'Create a new thread',
+    summary: 'Add a question',
     description: `This endpoint processes a user question and returns a response.
     It handles creation of messages using a DTO containing necessary
     information like user input and context`,
