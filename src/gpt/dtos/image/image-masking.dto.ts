@@ -10,6 +10,6 @@ export class ImageMaskingDto {
   readonly originalImageUrl: string;
 
   @IsString()
-  @MinLength(200000)
+  @MinLength(100)
   readonly maskImageBase64: string;
 }
