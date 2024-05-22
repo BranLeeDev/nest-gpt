@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -14,6 +15,12 @@ import { SamAssistantService } from '../services/sam-assistant.service';
 export class SamAssistantController {
   constructor(private readonly samAssistant: SamAssistantService) {}
 
+  @ApiOperation({
+    summary: 'Create a new thread',
+    description: `This endpoint processes a user question and returns a response.
+    It handles creation of messages using a DTO containing necessary
+    information like user input and context`,
+  })
   @ApiCreatedResponse({
     description: 'User question processed successfully',
   })

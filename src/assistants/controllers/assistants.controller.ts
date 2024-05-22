@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -13,6 +14,11 @@ import { AssistantsService } from '../services/assistants.service';
 export class AssistantsController {
   constructor(private readonly assistantsService: AssistantsService) {}
 
+  @ApiOperation({
+    summary: 'Create a new thread',
+    description: `Endpoint to create a new thread with the assistant service.
+      Returns the result of the operation`,
+  })
   @ApiCreatedResponse({
     description: 'Thread created successfully',
   })
