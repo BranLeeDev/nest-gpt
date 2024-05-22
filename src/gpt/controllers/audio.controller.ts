@@ -18,6 +18,7 @@ import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiProduces,
   ApiResponse,
   ApiTags,
@@ -34,6 +35,11 @@ import { saveFileToGenerated } from '@utils/files.util';
 export class AudioController {
   constructor(private readonly audioService: AudioService) {}
 
+  @ApiOperation({
+    summary: 'Converts text to audio',
+    description:
+      'Converts text to audio file (MP3 format) and returns it as a binary response',
+  })
   @ApiOkResponse({
     description:
       'The text-to-audio conversion was successful. The audio file is returned as a binary response',
@@ -57,6 +63,11 @@ export class AudioController {
     res.type('audio/mp3').send(buffer);
   }
 
+  @ApiOperation({
+    summary: 'Converts audio file to text',
+    description:
+      'Converts uploaded audio file (M4A format) to text, optionally using a prompt, and returns the text result',
+  })
   @ApiCreatedResponse({
     description: 'Audio file successfully converted to text',
   })
@@ -101,6 +112,11 @@ export class AudioController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Retrieves audio file by ID',
+    description:
+      'Retrieves and streams the audio file (MP3 format) associated with the specified file ID',
+  })
   @ApiOkResponse({
     description: 'Find audio file',
   })
