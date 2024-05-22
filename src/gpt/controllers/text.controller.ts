@@ -30,7 +30,7 @@ export class TextController {
   @ApiOperation({
     summary: 'Check orthography',
     description:
-      'Checks the orthography of a given text. Returns analysis results and suggestions for corrections.',
+      'Checks the orthography of a given text. Returns analysis results and suggestions for corrections. Only in Spanish',
   })
   @ApiCreatedResponse({ description: 'Orthography check successful' })
   @ApiBadRequestResponse({
