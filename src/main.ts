@@ -6,6 +6,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import { fastifyHelmet } from '@fastify/helmet';
 import { fastifyMultipart } from '@fastify/multipart';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@filters/http-exception.filter';
@@ -24,6 +25,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [],
   });
+  await app.register(fastifyHelmet);
   await app.register(fastifyMultipart, {
     attachFieldsToBody: true,
     limits: {
