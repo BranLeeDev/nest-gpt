@@ -12,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -26,6 +27,11 @@ export class TextController {
 
   constructor(private readonly textService: TextService) {}
 
+  @ApiOperation({
+    summary: 'Check orthography',
+    description:
+      'Checks the orthography of a given text. Returns analysis results and suggestions for corrections.',
+  })
   @ApiCreatedResponse({ description: 'Orthography check successful' })
   @ApiBadRequestResponse({
     description: 'An error ocurred',
@@ -41,6 +47,11 @@ export class TextController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Analyze argumentative text',
+    description:
+      'Analyzes argumentative text to identify pros and cons. Provides structured insights into the text content.',
+  })
   @ApiCreatedResponse({ description: 'Argumentative text analysis successful' })
   @ApiBadRequestResponse({
     description: 'An error ocurred',
@@ -56,6 +67,11 @@ export class TextController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Stream analysis of argumentative text',
+    description:
+      'Performs streaming analysis of argumentative text to identify pros and cons. Streams content in real-time.',
+  })
   @ApiOkResponse({
     description:
       'Successful response to pros-cons-argumentative-stream request',
@@ -84,6 +100,11 @@ export class TextController {
     this.logger.log('Pros-cons argumentative (stream) completed');
   }
 
+  @ApiOperation({
+    summary: 'Translate text',
+    description:
+      'Translates text from one language to another. Returns the translated text and maintains context.',
+  })
   @ApiCreatedResponse({ description: 'Translation successful' })
   @ApiBadRequestResponse({
     description: 'An error ocurred',
@@ -99,6 +120,11 @@ export class TextController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Stream translation of text',
+    description:
+      'Performs streaming translation of text. Streams translated content in real-time.',
+  })
   @ApiOkResponse({
     description: 'Successful response to translation stream request',
   })
