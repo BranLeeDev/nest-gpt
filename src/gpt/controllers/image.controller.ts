@@ -16,6 +16,7 @@ import {
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -35,6 +36,11 @@ import { saveFileToGenerated } from '@utils/files.util';
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
+  @ApiOperation({
+    summary: 'Create a new image generation',
+    description: `Creates a new image generation using provided parameters.
+      This endpoint processes the input to generate a new image`,
+  })
   @ApiCreatedResponse({
     description: 'A new image generation is created successfully',
   })
@@ -52,6 +58,11 @@ export class ImageController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Create a new image variation',
+    description: `Creates a new image variation based on provided settings.
+      This endpoint uses the input to produce a variant of an existing image`,
+  })
   @ApiCreatedResponse({
     description: 'A new image variation has been created successfully',
   })
@@ -69,6 +80,11 @@ export class ImageController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Execute image masking operation',
+    description: `Executes an image masking operation based on specified parameters.
+      This endpoint applies masking to an image according to provided settings`,
+  })
   @ApiCreatedResponse({
     description: 'A new image masking operation has been successfully executed',
   })
@@ -86,6 +102,11 @@ export class ImageController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Extract text from an image',
+    description: `Extracts text content from an uploaded image.
+      This endpoint processes the image to extract textual information`,
+  })
   @ApiCreatedResponse({
     description:
       'A new text extraction operation has been successfully executed from an image',
@@ -131,6 +152,11 @@ export class ImageController {
     return res;
   }
 
+  @ApiOperation({
+    summary: 'Retrieve a generated image',
+    description: `Retrieves a generated image based on the specified fileId.
+      This endpoint serves the generated image file`,
+  })
   @ApiOkResponse({ description: 'The generated image' })
   @ApiBadRequestResponse({
     description: 'An error ocurred',
