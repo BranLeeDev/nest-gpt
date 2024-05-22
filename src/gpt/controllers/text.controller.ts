@@ -8,6 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -26,6 +27,9 @@ export class TextController {
   constructor(private readonly textService: TextService) {}
 
   @ApiCreatedResponse({ description: 'Orthography check successful' })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
   @ApiResponse({
     status: 429,
     description: 'Too many request. PLease try again later',
@@ -38,6 +42,9 @@ export class TextController {
   }
 
   @ApiCreatedResponse({ description: 'Argumentative text analysis successful' })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
   @ApiResponse({
     status: 429,
     description: 'Too many request. PLease try again later',
@@ -52,6 +59,9 @@ export class TextController {
   @ApiOkResponse({
     description:
       'Successful response to pros-cons-argumentative-stream request',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
   })
   @ApiResponse({
     status: 429,
@@ -75,6 +85,9 @@ export class TextController {
   }
 
   @ApiCreatedResponse({ description: 'Translation successful' })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
+  })
   @ApiResponse({
     status: 429,
     description: 'Too many request. PLease try again later',
@@ -88,6 +101,9 @@ export class TextController {
 
   @ApiOkResponse({
     description: 'Successful response to translation stream request',
+  })
+  @ApiBadRequestResponse({
+    description: 'An error ocurred',
   })
   @ApiResponse({
     status: 429,
