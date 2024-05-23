@@ -37,7 +37,7 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @ApiOperation({
-    summary: 'Create a new image generation',
+    summary: 'Create a new image generation. (Not working)',
     description: `Creates a new image generation using provided parameters.
       This endpoint processes the input to generate a new image`,
   })
@@ -59,7 +59,7 @@ export class ImageController {
   }
 
   @ApiOperation({
-    summary: 'Create a new image variation',
+    summary: 'Create a new image variation. (Not working)',
     description: `Creates a new image variation based on provided settings.
       This endpoint uses the input to produce a variant of an existing image`,
   })
@@ -81,7 +81,7 @@ export class ImageController {
   }
 
   @ApiOperation({
-    summary: 'Execute image masking operation',
+    summary: 'Execute image masking operation. (Not working)',
     description: `Executes an image masking operation based on specified parameters.
       This endpoint applies masking to an image according to provided settings`,
   })
@@ -103,7 +103,7 @@ export class ImageController {
   }
 
   @ApiOperation({
-    summary: 'Extract text from an image',
+    summary: 'Extract text from an image. (Not working)',
     description: `Extracts text content from an uploaded image.
       This endpoint processes the image to extract textual information`,
   })
@@ -153,7 +153,7 @@ export class ImageController {
   }
 
   @ApiOperation({
-    summary: 'Retrieve a generated image',
+    summary: 'Retrieve a generated image. (Not working)',
     description: `Retrieves a generated image based on the specified fileId.
       This endpoint serves the generated image file`,
   })

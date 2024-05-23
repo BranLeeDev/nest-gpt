@@ -36,7 +36,7 @@ export class AudioController {
   constructor(private readonly audioService: AudioService) {}
 
   @ApiOperation({
-    summary: 'Converts text to audio',
+    summary: 'Converts text to audio. (Not working)',
     description:
       'Converts text to audio file (MP3 format) and returns it as a binary response',
   })
@@ -64,7 +64,7 @@ export class AudioController {
   }
 
   @ApiOperation({
-    summary: 'Converts audio file to text',
+    summary: 'Converts audio file to text. (Not working)',
     description:
       'Converts uploaded audio file (M4A format) to text, optionally using a prompt, and returns the text result',
   })
@@ -113,7 +113,7 @@ export class AudioController {
   }
 
   @ApiOperation({
-    summary: 'Retrieves audio file by ID',
+    summary: 'Retrieves audio file by ID. (Not working)',
     description:
       'Retrieves and streams the audio file (MP3 format) associated with the specified file ID',
   })
