@@ -23,7 +23,6 @@ COPY tsconfig.build.json  $DIR/tsconfig.build.json
 COPY .swcrc               $DIR/.swcrc
 COPY nest-cli.json        $DIR/.nest-cli.json
 COPY src                  $DIR/src
-COPY generated            $DIR/generated
 
 RUN pnpm build && \
     pnpm store prune && \
@@ -37,7 +36,6 @@ ENV NODE_ENV="production"
 
 COPY --from=build $DIR/node_modules $DIR/node_modules
 COPY --from=build $DIR/dist         $DIR/dist
-COPY --from=build $DIR/generated    $DIR/generated
 
 EXPOSE ${PORT}
 
